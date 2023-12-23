@@ -1,7 +1,14 @@
 import Product from "../model/productModel.js";
+import ProductFilter from "../utils/ProductFilter.js";
+import { v2 as cloudinary } from "cloudinary";
 
 const allProducts = async (req, res) => {
-  const products = await Product.find();
+  const resultPerPage = 10;
+  const productFilter = new ProductFilter(Product.find(), req.query)
+    .search()
+    .filter()
+    .pagination(resultPerPage);
+  const products = await productFilter.query;
 
   res.status(200).json({
     products,
@@ -20,6 +27,24 @@ const detailProduct = async (req, res) => {
 
 //!admin
 const createProduct = async (req, res) => {
+  let images = [];
+  if (req.body.images === "string") {
+    images.push(req.body.images);
+  } else {
+    images = req.body.images;
+  }
+
+  let allImage = [];
+  for (let i = 0; i < images.length; i++) {
+    const result = await cloudinary.uploader.upload(images[i], {
+      folder: "products",
+    });
+
+    allImage.push({
+      public_id: result.public_id,
+      url: result.secure_url,
+    });
+  }
   const inputProduct = req.body;
 
   const product = await Product.create(inputProduct);

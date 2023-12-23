@@ -33,6 +33,8 @@ const userSchema = new Schema(
       default: "user",
       required: true,
     },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
   { timestamps: true }
 );

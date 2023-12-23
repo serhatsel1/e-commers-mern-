@@ -7,6 +7,7 @@ import db from "./config/db.js";
 import { v2 as cloudinary } from "cloudinary";
 
 import productRoute from "./routes/productRoute.js";
+import userRoute from "./routes/userRoute.js";
 
 dotenv.config();
 
@@ -25,7 +26,7 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cookieParser());
 
 app.use("/", productRoute);
-
+app.use(userRoute);
 db();
 
 app.listen(port, () => {

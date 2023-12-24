@@ -11,7 +11,7 @@ const authenticatedmid = async (req, res, next) => {
     });
   }
 
-  const decodedData = await jwt.verify(token, process.env.SECRET_TOKEN);
+  const decodedData = jwt.verify(token, process.env.SECRET_TOKEN);
 
   if (!decodedData) {
     res.status(500).json({

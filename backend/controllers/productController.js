@@ -54,6 +54,7 @@ const createProduct = async (req, res, next) => {
     });
 
     req.body.images = allImage;
+    req.body.user = req.user.id;
   }
   const inputProduct = req.body;
 

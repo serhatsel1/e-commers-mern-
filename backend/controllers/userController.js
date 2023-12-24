@@ -45,7 +45,7 @@ const register = async (req, res) => {
 
   const cookieOptions = {
     httpOnly: true,
-    expires: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+    expires: Date.now() + 5 * 24 * 60 * 60 * 1000,
   };
   res.status(201).cookie("token", token, cookieOptions).json({
     newUser,
@@ -131,9 +131,19 @@ const forgotPassword = async (req, res) => {
       secure: true,
       auth: {
         // TODO: replace `user` and `pass` values from <https://forwardemail.net>
-        user: "REPLACE-WITH-YOUR-ALIAS@YOURDOMAIN.COM",
-        pass: "REPLACE-WITH-YOUR-GENERATED-PASSWORD",
+        user: process.env.NODE_MAIL,
+        pass: process.env.NODE_PASS,
       },
+    });
+    await transporter.sendMail({
+      from: process.env.NODE_MAIL, // sender address
+      to: req.body.email, // list of receivers
+      subject: "Şifre sıfırlama ✔", // Subject line
+      text: message,
+    });
+
+    res.status(200).json({
+      message: "Lütfen mailinizi kontrol ediniz !",
     });
   } catch (error) {
     passwordUrl = undefined;
@@ -147,6 +157,47 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-const resetPassword = (req, res) => {};
+const resetPassword = async (req, res) => {
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+  if (!user) {
+    return res.status(500).json({
+      message: "Geçersiz token!!",
+    });
+  }
 
-export { register, login, logout, forgotPassword, resetPassword };
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+
+  await user.save();
+
+  const token = jwt.sign({ id: user._id }, process.env.SECRET_TOKEN, {
+    expiresIn: "1h",
+  });
+
+  const cookieOptions = {
+    httpOnly: true,
+    expires: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+  };
+
+  res.status(200).cookie("token", token, cookieOptions).json({
+    user,
+    token,
+  });
+};
+const userDetail = async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+
+  res.status(200).json({
+    user,
+  });
+};
+
+export { register, login, logout, forgotPassword, resetPassword, userDetail };

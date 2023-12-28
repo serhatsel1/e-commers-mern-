@@ -3,6 +3,7 @@ import Filter from "../layout/Filter";
 import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../redux/productSlice";
 import ProductCard from "../components/ProductCard";
+import ReactPaginate from "react-paginate";
 
 const Products = () => {
   const dispatch = useDispatch();
@@ -13,6 +14,19 @@ const Products = () => {
   const [category, setCategory] = useState("");
 
   console.log("keyword -->", keyword);
+
+  const [itemOffset, setItemOffset] = useState(0);
+
+  const endOffset = itemOffset + 3;
+  console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+  const currentItems = products?.products?.slice(itemOffset, endOffset);
+  const pageCount = Math.ceil(products?.products?.length / 3);
+
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * 3) % products?.products?.length;
+ 
+    setItemOffset(newOffset);
+  };
 
   useEffect(() => {
     dispatch(getProducts({ keyword, price, rating, category }));
@@ -32,7 +46,7 @@ const Products = () => {
               ? "Loading..."
               : products?.products && (
                   <div className="flex items-center justify-center gap-5 my-5 flex-wrap">
-                    {products?.products?.map((product, index) => (
+                    {currentItems?.map((product, index) => (
                       <ProductCard product={product} key={index} />
                     ))}
                   </div>
@@ -40,7 +54,17 @@ const Products = () => {
           </div>
         </div>
       </div>
-      <div>pagination</div>
+      <div>
+        <ReactPaginate
+          breakLabel="..."
+          nextLabel="next >"
+          onPageChange={handlePageClick}
+          pageRangeDisplayed={5}
+          pageCount={pageCount}
+          previousLabel="< previous"
+          renderOnZeroPageCount={null}
+        />
+      </div>
     </div>
   );
 };

@@ -14,6 +14,12 @@ const Home = () => {
   return (
     <>
       <div>
+        <img
+          src="https://media.istockphoto.com/id/1346981800/tr/vekt%C3%B6r/promotion-flyer-discount-voucher-template-special-offer-market-poster-vector-image-sale-ads.jpg?s=2048x2048&w=is&k=20&c=GmKgXphgMlnvxdb9Tkf6zRqty0dyQiE86Phi3dsSVtc="
+          alt=""
+        />
+      </div>
+      <div>
         {loading
           ? "Loading..."
           : products?.products && (

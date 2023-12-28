@@ -2,7 +2,7 @@ import React from 'react'
 
 const Footer = () => {
   return (
-    <div>Footer</div>
+    <div className='flex h-16 bg-gray-200 justify-center text-2xl items-center'>Footer</div>
   )
 }
 

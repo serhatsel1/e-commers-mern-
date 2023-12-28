@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import { SlBasket } from "react-icons/sl";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { getKeyword } from "../redux/generalSlice";
 
 const Header = () => {
   const [openMenu, setOpenMenu] = useState(false);
+  const [keyword, setKeyword] = useState("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const menuItems = [
     {
       name: "Profile",
@@ -18,28 +24,44 @@ const Header = () => {
     },
   ];
 
+  const keywordFunc = () => {
+    dispatch(getKeyword(keyword));
+    navigate("/products");
+  };
+
   return (
     <div className="bg-gray-100 h-16 px-2 flex items-center justify-between">
       <div className="text-4xl">e.com</div>
       <div className="flex items-center gap-5">
         <div className="flex items-center">
           <input
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
             className="p-2 outline-none"
             type="text"
             placeholder="Arama yap"
           />
-          <div className="p-2 ml-1 bg-white cursor-pointer">Ara</div>
+          <div
+            onClick={keywordFunc}
+            className="p-2 ml-1 bg-white cursor-pointer"
+          >
+            Ara
+          </div>
         </div>
         <div className="relative">
-          <img onClick={() => setOpenMenu(!openMenu)}
-            className="w-8 h-8 rounded-full"
+          <img
+            onClick={() => setOpenMenu(!openMenu)}
+            className="w-8 h-8 rounded-full cursor-pointer"
             src="https://img.freepik.com/premium-vector/3d-simple-user-icon-isolated_169241-7120.jpg?w=826"
             alt=""
           />
           {openMenu && (
             <div className="absolute right-0 mt-3 w-[200px] bg-white shadow-lg shadow-gray-400">
               {menuItems.map((value, i) => (
-                <div className="px-2 py-1 hover:bg-gray-100" key={i}>
+                <div
+                  className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
+                  key={i}
+                >
                   {value.name}
                 </div>
               ))}

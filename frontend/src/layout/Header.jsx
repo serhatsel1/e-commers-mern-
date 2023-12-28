@@ -26,6 +26,7 @@ const Header = () => {
 
   const keywordFunc = () => {
     dispatch(getKeyword(keyword));
+    // setKeyword("")
     navigate("/products");
   };
 

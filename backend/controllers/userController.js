@@ -16,7 +16,7 @@ const register = async (req, res) => {
       width: 130,
       crop: "scale",
     });
-    console.log("avatar",avatar)
+    console.log("avatar", avatar);
 
     const { name, email, password } = req.body;
 
@@ -60,7 +60,6 @@ const register = async (req, res) => {
       // secure: true, // Güvenlik için, sadece HTTPS üzerinden iletişimde kullanılmalıdır
     };
 
-    
     // Yanıtı hazırla
     res
       .status(201)
@@ -98,7 +97,7 @@ const login = async (req, res) => {
 
   const cookieOptions = {
     httpOnly: true,
-    expires: new Date(Date.now + 5 * 24 * 60 * 60 * 1000),
+    maxAge: 5 * 24 * 60 * 60 * 1000,
   };
 
   res.status(200).cookie("token", token, cookieOptions).json({
@@ -110,7 +109,7 @@ const login = async (req, res) => {
 const logout = async (req, res) => {
   const cookieOptions = {
     httpOnly: true,
-    expires: new Dat(Date.now()),
+    expires: new Date(0),
   };
 
   res.status(200).cookie("token", null, cookieOptions).json({
@@ -121,7 +120,7 @@ const logout = async (req, res) => {
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
-  const user = await User.find(email);
+  const user = await User.find({email});
 
   if (!user) {
     return res.status(500).json({
@@ -139,8 +138,8 @@ const forgotPassword = async (req, res) => {
 
   await user.save({ validateBeforeSave: true });
 
-  const passwordUrl = `${req.protocol}://${req.get(host)}/reset/${resetToken}`;
-  const message = `Şifreyi sıfırlamak için lütfen aşağıdaki linke tıklayınız
+  let passwordUrl = `${req.protocol}://${req.get(host)}/reset/${resetToken}`;
+  let message = `Şifreyi sıfırlamak için lütfen aşağıdaki linke tıklayınız
   ${passwordUrl}
   `;
   //!
@@ -213,7 +212,7 @@ const resetPassword = async (req, res) => {
   });
 };
 const userDetail = async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.user.id);
 
   res.status(200).json({
     user,

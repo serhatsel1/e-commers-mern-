@@ -6,12 +6,22 @@ import Products from "./pages/Products";
 import Header from "./layout/Header";
 import Footer from "./layout/Footer";
 import Auth from "./pages/Auth";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { profile } from "./redux/userSlice";
 
 //React slick css
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 function App() {
+  const dispatch = useDispatch();
+  const { user, isAuth } = useSelector((state) => state.user);
+  useEffect(() => {
+    dispatch(profile());
+  }, [dispatch]);
+
+  console.log("authh-->", user, isAuth);
   return (
     <Router>
       <Header />

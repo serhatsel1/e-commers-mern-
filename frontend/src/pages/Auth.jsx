@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import { useDispatch } from "react-redux";
-import { register } from "../redux/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { login, register } from "../redux/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const Auth = () => {
   const [signUp, setSignUp] = useState(true);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { user, isAuth } = useSelector((state) => state.user);
   const [data, setData] = useState({
     name: "",
     email: "",
@@ -27,6 +30,9 @@ const Auth = () => {
         console.log("kayıt başarısız", error);
       });
   };
+  const loginFunc = () => {
+    dispatch(login(data));
+  };
 
   const handleChange = (e) => {
     if (e.target.name === "avatar") {
@@ -45,8 +51,14 @@ const Auth = () => {
       setData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     }
   };
+  useEffect(
+    (isAuth) => {
+      navigate("/");
+    },
+    [isAuth]
+  );
 
-  console.log("data --->", data);
+  // console.log("data --->", data);
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="w-1/3 -mt-10 border p-4 rounded-md  bg-gray-200 ">
@@ -96,7 +108,7 @@ const Auth = () => {
           {signUp ? "Giriş yap" : "Kayıt ol"}
         </div>
         <Button
-          name={signUp ? "Kayıt ols" : "Giriş yap"}
+          name={signUp ? "Kayıt ol" : "Giriş yap"}
           onClick={() => (signUp ? registerFunc() : loginFunc())}
         />
       </div>

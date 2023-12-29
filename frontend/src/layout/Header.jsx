@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { SlBasket } from "react-icons/sl";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getKeyword } from "../redux/generalSlice";
 
 const Header = () => {
   const [openMenu, setOpenMenu] = useState(false);
   const [keyword, setKeyword] = useState("");
+  const { user, isAuth } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const menuItems = [
@@ -29,7 +30,7 @@ const Header = () => {
     // setKeyword("")
     navigate("/products");
   };
-
+  console.log("--->",user,isAuth)
   return (
     <div className="bg-gray-100 h-16 px-2 flex items-center justify-between">
       <div className="text-4xl">e.com</div>

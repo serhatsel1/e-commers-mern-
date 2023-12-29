@@ -8,13 +8,13 @@ const initialState = {
 
 export const getProducts = createAsyncThunk("products", async ({ params }) => {
   let link = `http://localhost:8080/products?keyword=${
-    params.keyword
+    params.keyword || 0
   }&rating[gte]=${params.rating || 0}&price[gte]=${
     params.price.min || 0
   }&price[lte]=${params.price.max || 30000}`;
   if (params.category) {
     link = `http://localhost:8080/products?keyword=${
-      params.keyword
+      params.keyword || 0
     }&rating[gte]=${params.rating || 0}&price[gte]=${
       params.price.min || 0
     }&price[lte]=${params.price.max || 30000}&category=${params.category}`;

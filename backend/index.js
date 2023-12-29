@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cookieParser());
 
 app.use("/", productRoute);
-app.use(userRoute);
+app.use("/",userRoute);
 db();
 
 app.listen(port, () => {
